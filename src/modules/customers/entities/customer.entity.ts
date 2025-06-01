@@ -13,7 +13,7 @@ export class Customer {
   @ApiProperty()
   id: string;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ unique: true })
   @ApiProperty({ required: false })
   cpf?: string;
 
