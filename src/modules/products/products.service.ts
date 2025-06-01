@@ -1,26 +1,71 @@
-import { Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  constructor(
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+  ) {}
+
+  async create(createProductDto: CreateProductDto) {
+    try {
+      const product = this.productRepository.create(createProductDto);
+      return await this.productRepository.save(product);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating product', {
+        description: error.message,
+      });
+    }
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll() {
+    try {
+      return await this.productRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching products', {
+        description: error.message,
+      });
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    try {
+      return await this.productRepository.findOneBy({ id });
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching product', {
+        description: error.message,
+      });
+    }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    try {
+      await this.productRepository.update(id, updateProductDto);
+      return await this.productRepository.findOneBy({ id });
+    } catch (error) {
+      throw new InternalServerErrorException('Error updating product', {
+        description: error.message,
+      });
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    try {
+      const product = await this.findOne(id);
+      if (product) {
+        await this.productRepository.remove(product);
+      }
+    } catch (error) {
+      throw new InternalServerErrorException('Error removing product', {
+        description: error.message,
+      });
+    }
   }
 }
