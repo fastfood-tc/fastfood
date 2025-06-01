@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { validate } from './config/env.validation';
 import configuration from './config/configuration';
 import { DatabaseModule } from './config/database/database.module';
+import { CustomersModule } from './modules/customers/customers.module';
+import { ProductsModule } from './modules/products/products.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -12,6 +14,8 @@ import { DatabaseModule } from './config/database/database.module';
       load: [configuration],
     }),
     DatabaseModule,
+    CustomersModule,
+    ProductsModule,
   ],
 })
 export class AppModule {}
