@@ -1,13 +1,12 @@
-import { plainToInstance } from 'class-transformer'
+import { plainToInstance } from 'class-transformer';
 import {
   IsEnum,
   IsNumber,
   IsString,
   IsBoolean,
   IsNotEmpty,
-  IsOptional,
   validateSync,
-} from 'class-validator'
+} from 'class-validator';
 
 enum Environment {
   DEVELOPMENT = 'development',
@@ -24,49 +23,49 @@ enum DatabaseType {
 
 class EnvironmentVariables {
   @IsEnum(Environment)
-  NODE_ENV: Environment
+  NODE_ENV: Environment;
 
   @IsNumber()
-  PORT: number
+  PORT: number;
 
   @IsNumber()
-  DB_PORT: number
+  DB_PORT: number;
 
   @IsString()
   @IsNotEmpty()
-  DB_HOST: string
+  DB_HOST: string;
 
   @IsString()
   @IsNotEmpty()
-  DB_USER: string
+  DB_USER: string;
 
   @IsString()
   @IsNotEmpty()
-  DB_PASS: string
+  DB_PASS: string;
 
   @IsString()
   @IsNotEmpty()
-  DB_NAME: string
+  DB_NAME: string;
 
   @IsEnum(DatabaseType)
-  DB_TYPE: DatabaseType
+  DB_TYPE: DatabaseType;
 
   @IsBoolean()
-  DB_SYNCHRONIZE: boolean
+  DB_SYNCHRONIZE: boolean;
 }
 
 export function validate(config: Record<string, unknown>) {
   const validatedConfig = plainToInstance(EnvironmentVariables, config, {
     enableImplicitConversion: true,
-  })
+  });
 
   const errors = validateSync(validatedConfig, {
     skipMissingProperties: false,
-  })
+  });
 
   if (errors.length > 0) {
-    throw new Error(`Erros na validação do .env:\n${errors.toString()}`)
+    throw new Error(`Erros na validação do .env:\n${errors.toString()}`);
   }
 
-  return validatedConfig 
+  return validatedConfig;
 }

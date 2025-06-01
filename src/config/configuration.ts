@@ -8,5 +8,5 @@ export default () => ({
     name: process.env.DB_NAME,
     type: process.env.DB_TYPE,
     dialect: process.env.DB_DIALECT,
-  }
+  },
 });

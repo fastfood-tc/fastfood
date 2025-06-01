@@ -9,7 +9,7 @@ import { DatabaseModule } from './config/database/database.module';
       validate,
       isGlobal: true,
       envFilePath: `.env`,
-      load: [configuration]
+      load: [configuration],
     }),
     DatabaseModule,
   ],
