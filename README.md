@@ -13,6 +13,11 @@ Para rodar o banco de dados
 docker compose up  
 ```
 
+Gerar SEED
+```bash
+npm run seed:run:document
+```
+
 Para rodar o projeto
 ```bash
 npm run start:dev 
