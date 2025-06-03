@@ -1,15 +1,21 @@
-
 services:
-  # api:
-  #   build: .
-  #   ports:
-  #     - '3000:3000'
-  #   volumes:
-  #     - .:/app
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - db
+  web:
+    image: fiap-fasfood:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+      - DB_TYPE=${DB_TYPE}
+      - DB_SYNCHRONIZE=${DB_SYNCHRONIZE}
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
   db:
     image: postgres:15
     environment:
