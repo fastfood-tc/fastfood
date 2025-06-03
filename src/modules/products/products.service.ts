@@ -4,8 +4,9 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { ProductCategory } from './types/products.types';
 
 @Injectable()
 export class ProductsService {
@@ -32,6 +33,22 @@ export class ProductsService {
       throw new InternalServerErrorException('Error fetching products', {
         description: error.message,
       });
+    }
+  }
+
+  async findByCategory(category: ProductCategory) {
+    try {
+      return await this.productRepository.find({
+        where: { category },
+        order: { name: 'ASC' },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error fetching products by category',
+        {
+          description: error.message,
+        },
+      );
     }
   }
 
@@ -64,6 +81,24 @@ export class ProductsService {
       }
     } catch (error) {
       throw new InternalServerErrorException('Error removing product', {
+        description: error.message,
+      });
+    }
+  }
+
+  async findByIds(productIds: string[]) {
+    if (!productIds || productIds.length === 0) {
+      throw new InternalServerErrorException('Product IDs are required');
+    }
+    if (productIds.length > 100) {
+      throw new InternalServerErrorException('Too many product IDs provided');
+    }
+    try {
+      return await this.productRepository.find({
+        where: { id: In(productIds) },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching products by IDs', {
         description: error.message,
       });
     }

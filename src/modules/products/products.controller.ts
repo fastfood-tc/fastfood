@@ -11,6 +11,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { ProductCategory } from './types/products.types';
 
 @ApiTags('products')
 @Controller('products')
@@ -25,6 +26,10 @@ export class ProductsController {
   @Get()
   findAll() {
     return this.productsService.findAll();
+  }
+  @Get('category/:category')
+  findByCategory(@Param('category') category: ProductCategory) {
+    return this.productsService.findByCategory(category);
   }
 
   @Get(':id')
