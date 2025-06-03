@@ -9,5 +9,6 @@ import { ProductsModule } from '../products/products.module';
   imports: [TypeOrmModule.forFeature([OrderItem]), ProductsModule],
   controllers: [OrderItemController],
   providers: [OrderItemService],
+  exports: [OrderItemService],
 })
 export class OrderItemModule {}

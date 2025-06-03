@@ -40,9 +40,9 @@ export class CustomersService {
     }
   }
 
-  findAll() {
+  async findAll() {
     try {
-      return this.customerRepository.find();
+      return await this.customerRepository.find();
     } catch (error) {
       throw new InternalServerErrorException('Error retrieving customers', {
         description: error.message,
@@ -93,6 +93,20 @@ export class CustomersService {
       throw new InternalServerErrorException('Error removing customer', {
         description: error.message,
       });
+    }
+  }
+
+  async findByEmail(email: string) {
+    try {
+      const customer = await this.customerRepository.findOneBy({ email });
+      return customer;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error retrieving customer by email',
+        {
+          description: error.message,
+        },
+      );
     }
   }
 }

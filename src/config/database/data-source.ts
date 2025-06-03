@@ -5,6 +5,7 @@ import { Customer } from 'src/modules/customers/entities/customer.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { OrderItem } from 'src/modules/order-item/entities/order-item.entity';
+import { Payment } from 'src/modules/payments/entities/payments.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -17,7 +18,7 @@ export const AppDataSource = new DataSource({
   dropSchema: false,
   keepConnectionAlive: true,
   logging: process.env.NODE_ENV !== 'production',
-  entities: [Customer, Order, Product, OrderItem],
+  entities: [Customer, Order, Product, OrderItem, Payment],
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
   cli: {
     entitiesDir: 'src',

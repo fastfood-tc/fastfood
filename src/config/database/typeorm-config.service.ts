@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { Customer } from 'src/modules/customers/entities/customer.entity';
+import { OrderItem } from 'src/modules/order-item/entities/order-item.entity';
+import { Order } from 'src/modules/orders/entities/order.entity';
+import { Payment } from 'src/modules/payments/entities/payments.entity';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -13,9 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       database: process.env.DB_NAME,
       synchronize: process.env.DB_SYNCHRONIZE === 'true',
       dropSchema: false,
-      logging: process.env.NODE_ENV !== 'production',
-      // keepConnectionAlive: true,
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      entities: [Customer, Order, Product, OrderItem, Payment],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       ssl:
         process.env.DB_SSL_ENABLED === 'true'

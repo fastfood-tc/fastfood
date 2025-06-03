@@ -4,7 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -33,9 +33,6 @@ export class Customer {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Order, (order) => order.customer, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
-  orders?: Order[];
+  @OneToMany(() => Order, (order) => order.customer)
+  orders: Order[];
 }
