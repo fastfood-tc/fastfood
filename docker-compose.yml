@@ -6,8 +6,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
-      - DB_HOST=db
+      - DB_HOST=postgres
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
@@ -16,7 +19,7 @@ services:
       - DB_SYNCHRONIZE=${DB_SYNCHRONIZE}
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
-  db:
+  postgres:
     image: postgres:15
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -24,3 +27,8 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - '${DB_PORT}:5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
