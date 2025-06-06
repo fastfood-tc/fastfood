@@ -9,8 +9,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
-import { CustomersService } from '../customers/customers.service';
-import { Customer } from '../customers/entities/customer.entity';
+import { CustomerService } from '../customers/application/services/customer.service';
+import { Customer } from '../customers/domain/core/customer.entity';
 import { OrderItem } from '../order-item/entities/order-item.entity';
 import { OrderItemService } from '../order-item/order-item.service';
 import { OrderStatus } from './types/orders.types';
@@ -20,7 +20,7 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
-    private readonly customerService: CustomersService,
+    private readonly customerService: CustomerService,
     private readonly orderItemService: OrderItemService,
   ) {}
 
