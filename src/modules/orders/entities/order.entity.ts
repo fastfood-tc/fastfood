@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { OrderStatus } from '../types/orders.types';
 import { OrderItem } from 'src/modules/order-item/entities/order-item.entity';
-import { Customer } from 'src/modules/customers/entities/customer.entity';
+import { Customer } from 'src/modules/customers/domain/core/customer.entity';
 
 @Entity()
 export class Order {

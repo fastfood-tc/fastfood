@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Customer } from 'src/modules/customers/entities/customer.entity';
+import { Customer } from 'src/modules/customers/domain/core/customer.entity';
 import { OrderItem } from 'src/modules/order-item/entities/order-item.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Payment } from 'src/modules/payments/entities/payments.entity';

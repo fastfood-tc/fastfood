@@ -1,23 +1,23 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
-import { CreateCustomerDto } from './dto/create-customer.dto';
-import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Customer } from './entities/customer.entity';
-import { Repository } from 'typeorm';
+import { CreateCustomerDto } from '../dto/create-customer.dto';
+import { UpdateCustomerDto } from '../dto/update-customer.dto';
+import { Customer } from '../../domain/core/customer.entity';
+import { ICustomerRepository, CUSTOMER_REPOSITORY } from '../../ports/out/customer.repository.port';
 
 @Injectable()
-export class CustomersService {
-  @InjectRepository(Customer)
-  private readonly customerRepository: Repository<Customer>;
+export class CustomerService {
+  constructor(
+    @Inject(CUSTOMER_REPOSITORY)
+    private readonly customerRepository: ICustomerRepository,
+  ) {}
 
-  async create(createCustomerDto: CreateCustomerDto) {
+  async create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
     try {
       const { cpf, email } = createCustomerDto;
       if (!cpf && !email) {
@@ -25,14 +25,15 @@ export class CustomersService {
           'At least one field (cpf or email) must be provided.',
         );
       }
-      const existingCustomer = await this.customerRepository.findOne({
-        where: { cpf },
-      });
-      if (existingCustomer) {
-        throw new ConflictException('Customer with this CPF already exists.');
+
+      if (cpf) {
+        const existingCustomer = await this.customerRepository.findByCpf(cpf);
+        if (existingCustomer) {
+          throw new ConflictException('Customer with this CPF already exists.');
+        }
       }
-      const customer = this.customerRepository.create(createCustomerDto);
-      return this.customerRepository.save(customer);
+
+      return this.customerRepository.create(createCustomerDto);
     } catch (error) {
       throw new InternalServerErrorException('Error creating customer', {
         description: error.message,
@@ -40,9 +41,9 @@ export class CustomersService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<Customer[]> {
     try {
-      return await this.customerRepository.find();
+      return await this.customerRepository.findAll();
     } catch (error) {
       throw new InternalServerErrorException('Error retrieving customers', {
         description: error.message,
@@ -50,12 +51,12 @@ export class CustomersService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Customer> {
     try {
       if (!id) {
         throw new NotFoundException('Customer ID is required.');
       }
-      const customer = await this.customerRepository.findOneBy({ id });
+      const customer = await this.customerRepository.findOne(id);
       if (!customer) {
         throw new NotFoundException(`Customer with ID ${id} not found.`);
       }
@@ -67,14 +68,13 @@ export class CustomersService {
     }
   }
 
-  async update(id: string, updateCustomerDto: UpdateCustomerDto) {
+  async update(id: string, updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
     try {
       const customer = await this.findOne(id);
       if (!customer) {
         throw new NotFoundException(`Customer with ID ${id} not found.`);
       }
-      Object.assign(customer, updateCustomerDto);
-      return this.customerRepository.save(customer);
+      return this.customerRepository.update(id, updateCustomerDto);
     } catch (error) {
       throw new InternalServerErrorException('Error updating customer', {
         description: error.message,
@@ -82,13 +82,13 @@ export class CustomersService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<Customer> {
     try {
       const customer = await this.findOne(id);
       if (!customer) {
         throw new NotFoundException(`Customer with ID ${id} not found.`);
       }
-      return this.customerRepository.remove(customer);
+      return this.customerRepository.remove(id);
     } catch (error) {
       throw new InternalServerErrorException('Error removing customer', {
         description: error.message,
@@ -96,10 +96,9 @@ export class CustomersService {
     }
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<Customer> {
     try {
-      const customer = await this.customerRepository.findOneBy({ email });
-      return customer;
+      return await this.customerRepository.findByEmail(email);
     } catch (error) {
       throw new InternalServerErrorException(
         'Error retrieving customer by email',
@@ -109,4 +108,4 @@ export class CustomersService {
       );
     }
   }
-}
+} 

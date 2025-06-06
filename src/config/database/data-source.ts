@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import 'dotenv/config';
-import { Customer } from 'src/modules/customers/entities/customer.entity';
+import { Customer } from 'src/modules/customers/domain/core/customer.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { OrderItem } from 'src/modules/order-item/entities/order-item.entity';
