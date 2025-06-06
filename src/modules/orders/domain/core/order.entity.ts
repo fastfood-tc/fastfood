@@ -9,9 +9,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OrderStatus } from '../types/orders.types';
-import { OrderItem } from 'src/modules/order-item/entities/order-item.entity';
-import { Customer } from 'src/modules/customers/domain/core/customer.entity';
+import { OrderStatus } from './types/orders.types';
+import { OrderItem } from '../../../order-item/domain/core/order-item.entity';
+import { Customer } from '../../../customers/domain/core/customer.entity';
+
+export { OrderStatus };
 
 @Entity()
 export class Order {

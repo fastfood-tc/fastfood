@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import 'dotenv/config';
 import { Customer } from 'src/modules/customers/domain/core/customer.entity';
-import { Order } from 'src/modules/orders/entities/order.entity';
+import { Order } from 'src/modules/orders/domain/core/order.entity';
+import { OrderItem } from 'src/modules/order-item/domain/core/order-item.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { OrderItem } from 'src/modules/order-item/entities/order-item.entity';
 import { Payment } from 'src/modules/payments/entities/payments.entity';
 
 export const AppDataSource = new DataSource({
@@ -19,7 +19,7 @@ export const AppDataSource = new DataSource({
   keepConnectionAlive: true,
   logging: process.env.NODE_ENV !== 'production',
   entities: [Customer, Order, Product, OrderItem, Payment],
-  migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
   cli: {
     entitiesDir: 'src',
 

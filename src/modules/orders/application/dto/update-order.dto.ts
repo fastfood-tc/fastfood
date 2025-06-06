@@ -1,4 +1,4 @@
-import { OrderStatus } from '../types/orders.types';
+import { OrderStatus } from '../../domain/core/types/orders.types';
 
 export class UpdateOrderStatusDto {
   id: string;

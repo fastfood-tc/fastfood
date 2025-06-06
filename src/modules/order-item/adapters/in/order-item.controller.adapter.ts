@@ -7,12 +7,12 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { OrderItemService } from './order-item.service';
-import { CreateOrderItemDto } from './dto/create-order-item.dto';
-import { UpdateOrderItemDto } from './dto/update-order-item.dto';
+import { OrderItemService } from '../../application/services/order-item.service';
+import { CreateOrderItemDto } from '../../application/dto/create-order-item.dto';
+import { UpdateOrderItemDto } from '../../application/dto/update-order-item.dto';
 
-@Controller('order-item')
-export class OrderItemController {
+@Controller('order-items')
+export class OrderItemControllerAdapter {
   constructor(private readonly orderItemService: OrderItemService) {}
 
   @Post()
@@ -42,4 +42,9 @@ export class OrderItemController {
   remove(@Param('id') id: string) {
     return this.orderItemService.remove(id);
   }
-}
+
+  @Get('order/:orderId')
+  findByOrderId(@Param('orderId') orderId: string) {
+    return this.orderItemService.findByOrderId(orderId);
+  }
+} 
