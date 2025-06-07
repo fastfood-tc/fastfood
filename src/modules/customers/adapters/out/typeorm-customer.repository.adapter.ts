@@ -2,7 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from '../../domain/core/customer.entity';
-import { ICustomerRepository, CUSTOMER_REPOSITORY } from '../../ports/out/customer.repository.port';
+import {
+  ICustomerRepository,
+  CUSTOMER_REPOSITORY,
+} from '../../ports/out/customer.repository.port';
 
 @Injectable()
 export class TypeOrmCustomerRepositoryAdapter implements ICustomerRepository {
@@ -22,7 +25,8 @@ export class TypeOrmCustomerRepositoryAdapter implements ICustomerRepository {
 
   async findOne(id: string): Promise<Customer> {
     const customer = await this.repository.findOneBy({ id });
-    if (!customer) throw new NotFoundException(`Customer with ID ${id} not found`);
+    if (!customer)
+      throw new NotFoundException(`Customer with ID ${id} not found`);
     return customer;
   }
 
@@ -38,13 +42,13 @@ export class TypeOrmCustomerRepositoryAdapter implements ICustomerRepository {
 
   async findByEmail(email: string): Promise<Customer> {
     const customer = await this.repository.findOneBy({ email });
-    if (!customer) throw new NotFoundException(`Customer with email ${email} not found`);
+    if (!customer)
+      throw new NotFoundException(`Customer with email ${email} not found`);
     return customer;
   }
 
-  async findByCpf(cpf: string): Promise<Customer> {
+  async findByCpf(cpf: string): Promise<Customer | null> {
     const customer = await this.repository.findOneBy({ cpf });
-    if (!customer) throw new NotFoundException(`Customer with CPF ${cpf} not found`);
     return customer;
   }
-} 
+}
