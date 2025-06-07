@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   ConflictException,
   Injectable,
@@ -8,7 +10,10 @@ import {
 import { CreateCustomerDto } from '../dto/create-customer.dto';
 import { UpdateCustomerDto } from '../dto/update-customer.dto';
 import { Customer } from '../../domain/core/customer.entity';
-import { ICustomerRepository, CUSTOMER_REPOSITORY } from '../../ports/out/customer.repository.port';
+import {
+  ICustomerRepository,
+  CUSTOMER_REPOSITORY,
+} from '../../ports/out/customer.repository.port';
 
 @Injectable()
 export class CustomerService {
@@ -68,7 +73,10 @@ export class CustomerService {
     }
   }
 
-  async update(id: string, updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
+  async update(
+    id: string,
+    updateCustomerDto: UpdateCustomerDto,
+  ): Promise<Customer> {
     try {
       const customer = await this.findOne(id);
       if (!customer) {
@@ -108,4 +116,4 @@ export class CustomerService {
       );
     }
   }
-} 
+}

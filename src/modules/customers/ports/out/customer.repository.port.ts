@@ -9,5 +9,5 @@ export interface ICustomerRepository {
   update(id: string, customer: Partial<Customer>): Promise<Customer>;
   remove(id: string): Promise<Customer>;
   findByEmail(email: string): Promise<Customer>;
-  findByCpf(cpf: string): Promise<Customer>;
+  findByCpf(cpf: string): Promise<Customer | null>;
 }
