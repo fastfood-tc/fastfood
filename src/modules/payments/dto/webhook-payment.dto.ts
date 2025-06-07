@@ -1,5 +1,5 @@
 import { IsEnum, IsString } from 'class-validator';
-import { PaymentStatus } from '../types/payments.types';
+import { PaymentStatus } from '../domain/core/types/payment.types';
 
 export class WebhookPaymentDto {
   @IsString()

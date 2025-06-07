@@ -1,12 +1,12 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { PaymentStatus } from '../types/payments.types';
+import { PaymentStatus } from './types/payment.types';
 
 @Entity()
 export class Payment {
@@ -30,4 +30,4 @@ export class Payment {
 
   @UpdateDateColumn()
   updatedAt: Date;
-}
+} 

@@ -1,31 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { Payment } from './entities/payments.entity';
-import { OrderService } from '../orders/application/services/order.service';
-import { PaymentStatus } from './types/payments.types';
-import { WebhookPaymentDto } from './dto/webhook-payment.dto';
-import { OrderStatus } from '../orders/domain/core/types/orders.types';
-import { UpdateOrderStatusDto } from '../orders/application/dto/update-order.dto';
+import { CreatePaymentDto } from '../dto/create-payment.dto';
+import { WebhookPaymentDto } from '../dto/webhook-payment.dto';
+import { Payment } from '../../domain/core/payment.entity';
+import { IPaymentRepository, PAYMENT_REPOSITORY } from '../../ports/out/payment.repository.port';
+import { PaymentStatus } from '../../domain/core/types/payment.types';
+import { OrderService } from '../../../orders/application/services/order.service';
+import { OrderStatus } from '../../../orders/domain/core/types/orders.types';
 
 @Injectable()
 export class PaymentService {
   constructor(
-    @InjectRepository(Payment)
-    private readonly paymentRepository: Repository<Payment>,
+    @Inject(PAYMENT_REPOSITORY)
+    private readonly paymentRepository: IPaymentRepository,
     private readonly orderService: OrderService,
   ) {}
 
-  async create(dto: CreatePaymentDto) {
-    const { orderId } = dto;
+  async create(dto: CreatePaymentDto): Promise<Payment> {
     try {
+      const { orderId } = dto;
       const order = await this.orderService.findOne(orderId);
       if (!order) {
         throw new NotFoundException(`Order with ID ${orderId} not found.`);
@@ -34,11 +31,10 @@ export class PaymentService {
         (total, item) => total + item.product.price * item.quantity,
         0,
       );
-      const payment = this.paymentRepository.create({
+      return await this.paymentRepository.create({
         orderId: order.id,
         amount,
       });
-      return await this.paymentRepository.save(payment);
     } catch (error) {
       if (error instanceof Error) {
         throw new InternalServerErrorException('Error creating payment', {
@@ -49,26 +45,48 @@ export class PaymentService {
     }
   }
 
-  async findAll() {
-    return await this.paymentRepository.find();
-  }
-
-  async findOne(id: string) {
-    return await this.paymentRepository.findOneBy({ id });
-  }
-
-  async remove(id: string) {
-    return await this.paymentRepository.delete(id);
-  }
-
-  async updateStatus(id: string, status: PaymentStatus) {
+  async findAll(): Promise<Payment[]> {
     try {
-      const payment = await this.paymentRepository.findOneBy({ id });
-      if (!payment) {
-        throw new NotFoundException(`Payment with ID ${id} not found.`);
+      return await this.paymentRepository.findAll();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new InternalServerErrorException('Error fetching payments', {
+          description: error.message,
+        });
       }
-      payment.status = status;
-      return await this.paymentRepository.save(payment);
+      throw new InternalServerErrorException('Error fetching payments');
+    }
+  }
+
+  async findOne(id: string): Promise<Payment> {
+    try {
+      return await this.paymentRepository.findOne(id);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new InternalServerErrorException('Error fetching payment', {
+          description: error.message,
+        });
+      }
+      throw new InternalServerErrorException('Error fetching payment');
+    }
+  }
+
+  async remove(id: string): Promise<Payment> {
+    try {
+      return await this.paymentRepository.remove(id);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new InternalServerErrorException('Error removing payment', {
+          description: error.message,
+        });
+      }
+      throw new InternalServerErrorException('Error removing payment');
+    }
+  }
+
+  async updateStatus(id: string, status: PaymentStatus): Promise<Payment> {
+    try {
+      return await this.paymentRepository.updateStatus(id, status);
     } catch (error) {
       if (error instanceof Error) {
         throw new InternalServerErrorException('Error updating payment status', {
@@ -81,8 +99,8 @@ export class PaymentService {
 
   async webhook(dto: WebhookPaymentDto) {
     try {
-      const { id, status } = dto; // Assuming body contains an 'id' field
-      const payment = await this.paymentRepository.findOneBy({ id });
+      const { id, status } = dto;
+      const payment = await this.paymentRepository.findOne(id);
       if (!payment) {
         throw new NotFoundException(`Payment with ID ${id} not found.`);
       }
@@ -109,4 +127,4 @@ export class PaymentService {
       throw new InternalServerErrorException('Error processing webhook');
     }
   }
-}
+} 
