@@ -9,4 +9,5 @@ export interface IOrderItemRepository {
   update(id: string, orderItem: Partial<OrderItem>): Promise<OrderItem>;
   remove(id: string): Promise<OrderItem>;
   findByOrderId(orderId: string): Promise<OrderItem[]>;
-} 
+  save(orderItem: OrderItem): Promise<OrderItem>;
+}

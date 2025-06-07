@@ -8,10 +8,7 @@ import { ORDER_ITEM_REPOSITORY } from './ports/out/order-item.repository.port';
 import { ProductsModule } from '../products/products.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([OrderItem]),
-    ProductsModule,
-  ],
+  imports: [TypeOrmModule.forFeature([OrderItem]), ProductsModule],
   controllers: [OrderItemControllerAdapter],
   providers: [
     OrderItemService,

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderItem } from '../../domain/core/order-item.entity';
-import { IOrderItemRepository, ORDER_ITEM_REPOSITORY } from '../../ports/out/order-item.repository.port';
+import { IOrderItemRepository } from '../../ports/out/order-item.repository.port';
 
 @Injectable()
 export class TypeOrmOrderItemRepositoryAdapter implements IOrderItemRepository {
@@ -16,13 +16,21 @@ export class TypeOrmOrderItemRepositoryAdapter implements IOrderItemRepository {
     return this.repository.save(newOrderItem);
   }
 
+  async save(orderItem: OrderItem): Promise<OrderItem> {
+    return this.repository.save(orderItem);
+  }
+
   async findAll(): Promise<OrderItem[]> {
     return this.repository.find();
   }
 
   async findOne(id: string): Promise<OrderItem> {
-    const orderItem = await this.repository.findOneBy({ id });
-    if (!orderItem) throw new NotFoundException(`Order item with ID ${id} not found`);
+    const orderItem = await this.repository.findOne({
+      where: { id },
+      relations: ['product'],
+    });
+    if (!orderItem)
+      throw new NotFoundException(`Order item with ID ${id} not found`);
     return orderItem;
   }
 
@@ -42,4 +50,4 @@ export class TypeOrmOrderItemRepositoryAdapter implements IOrderItemRepository {
       relations: ['order'],
     });
   }
-} 
+}

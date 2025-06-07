@@ -6,8 +6,11 @@ import {
 } from '@nestjs/common';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { UpdateOrderStatusDto } from '../dto/update-order.dto';
-import { Order, OrderStatus } from '../../domain/core/order.entity';
-import { IOrderRepository, ORDER_REPOSITORY } from '../../ports/out/order.repository.port';
+import { Order } from '../../domain/core/order.entity';
+import {
+  IOrderRepository,
+  ORDER_REPOSITORY,
+} from '../../ports/out/order.repository.port';
 import { CustomerService } from '../../../customers/application/services/customer.service';
 import { OrderItemService } from '../../../order-item/application/services/order-item.service';
 import { Customer } from '../../../customers/domain/core/customer.entity';
@@ -43,9 +46,10 @@ export class OrderService {
           productId: item.productId,
           quantity: item.quantity,
         });
+
         orderItems.push(orderItem);
       }
-      
+
       return this.orderRepository.create({
         customer,
         items: orderItems,
@@ -86,10 +90,15 @@ export class OrderService {
     }
   }
 
-  async updateStatus(id: string, updateOrderStatusDto: UpdateOrderStatusDto): Promise<Order> {
+  async updateStatus(
+    id: string,
+    updateOrderStatusDto: UpdateOrderStatusDto,
+  ): Promise<Order> {
     try {
       await this.orderRepository.findOne(id);
-      return this.orderRepository.update(id, { status: updateOrderStatusDto.status });
+      return this.orderRepository.update(id, {
+        status: updateOrderStatusDto.status,
+      });
     } catch (error) {
       if (error instanceof Error) {
         throw new InternalServerErrorException('Error updating order status', {
@@ -119,11 +128,16 @@ export class OrderService {
       return await this.orderRepository.findByCustomerId(customerId);
     } catch (error) {
       if (error instanceof Error) {
-        throw new InternalServerErrorException('Error retrieving customer orders', {
-          description: error.message,
-        });
+        throw new InternalServerErrorException(
+          'Error retrieving customer orders',
+          {
+            description: error.message,
+          },
+        );
       }
-      throw new InternalServerErrorException('Error retrieving customer orders');
+      throw new InternalServerErrorException(
+        'Error retrieving customer orders',
+      );
     }
   }
-} 
+}

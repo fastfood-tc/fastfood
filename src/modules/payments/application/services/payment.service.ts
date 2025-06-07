@@ -7,7 +7,10 @@ import {
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { WebhookPaymentDto } from '../dto/webhook-payment.dto';
 import { Payment } from '../../domain/core/payment.entity';
-import { IPaymentRepository, PAYMENT_REPOSITORY } from '../../ports/out/payment.repository.port';
+import {
+  IPaymentRepository,
+  PAYMENT_REPOSITORY,
+} from '../../ports/out/payment.repository.port';
 import { PaymentStatus } from '../../domain/core/types/payment.types';
 import { OrderService } from '../../../orders/application/services/order.service';
 import { OrderStatus } from '../../../orders/domain/core/types/orders.types';
@@ -89,9 +92,12 @@ export class PaymentService {
       return await this.paymentRepository.updateStatus(id, status);
     } catch (error) {
       if (error instanceof Error) {
-        throw new InternalServerErrorException('Error updating payment status', {
-          description: error.message,
-        });
+        throw new InternalServerErrorException(
+          'Error updating payment status',
+          {
+            description: error.message,
+          },
+        );
       }
       throw new InternalServerErrorException('Error updating payment status');
     }
@@ -104,12 +110,18 @@ export class PaymentService {
       if (!payment) {
         throw new NotFoundException(`Payment with ID ${id} not found.`);
       }
-      if (payment.status === PaymentStatus.APPROVED) {
+      if (status === PaymentStatus.APPROVED) {
         const order = await this.orderService.findOne(payment.orderId);
-        await this.orderService.updateStatus(order.id, { id: order.id, status: OrderStatus.PAGO });
+        await this.orderService.updateStatus(order.id, {
+          id: order.id,
+          status: OrderStatus.PAGO,
+        });
       }
       if (status === PaymentStatus.FAILED) {
-        await this.orderService.updateStatus(payment.orderId, { id: payment.orderId, status: OrderStatus.CANCELADO });
+        await this.orderService.updateStatus(payment.orderId, {
+          id: payment.orderId,
+          status: OrderStatus.CANCELADO,
+        });
       }
       const orderUpdated = await this.orderService.findOne(payment.orderId);
       const paymentUpdated = await this.updateStatus(id, status);
@@ -127,4 +139,4 @@ export class PaymentService {
       throw new InternalServerErrorException('Error processing webhook');
     }
   }
-} 
+}
