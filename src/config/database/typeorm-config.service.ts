@@ -3,8 +3,8 @@ import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Customer } from 'src/modules/customers/domain/core/customer.entity';
 import { OrderItem } from 'src/modules/order-item/domain/core/order-item.entity';
 import { Order } from 'src/modules/orders/domain/core/order.entity';
-import { Product } from 'src/modules/products/entities/product.entity';
-import { Payment } from 'src/modules/payments/entities/payments.entity';
+import { Product } from 'src/modules/products/domain/core/product.entity';
+import { Payment } from 'src/modules/payments/domain/core/payment.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {

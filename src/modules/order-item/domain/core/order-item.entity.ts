@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Order } from '../../../orders/domain/core/order.entity';
-import { Product } from '../../../products/entities/product.entity';
+import { Product } from '../../../products/domain/core/product.entity';
 import {
   Column,
   CreateDateColumn,

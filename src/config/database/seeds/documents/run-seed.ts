@@ -2,7 +2,7 @@
 import { AppDataSource } from '../../data-source';
 import { Customer } from 'src/modules/customers/domain/core/customer.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { Product } from 'src/modules/products/entities/product.entity';
+import { Product } from 'src/modules/products/domain/core/product.entity';
 import { ProductCategory } from 'src/modules/products/types/products.types';
 
 async function runSeed() {
