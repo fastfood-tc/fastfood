@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from '../../domain/core/order.entity';
-import { IOrderRepository, ORDER_REPOSITORY } from '../../ports/out/order.repository.port';
+import { IOrderRepository } from '../../ports/out/order.repository.port';
 
 @Injectable()
 export class TypeOrmOrderRepositoryAdapter implements IOrderRepository {
@@ -21,7 +21,10 @@ export class TypeOrmOrderRepositoryAdapter implements IOrderRepository {
   }
 
   async findOne(id: string): Promise<Order> {
-    const order = await this.repository.findOneBy({ id });
+    const order = await this.repository.findOne({
+      where: { id },
+      relations: ['customer', 'items'],
+    });
     if (!order) throw new NotFoundException(`Order with ID ${id} not found`);
     return order;
   }
@@ -42,4 +45,4 @@ export class TypeOrmOrderRepositoryAdapter implements IOrderRepository {
       relations: ['customer'],
     });
   }
-} 
+}

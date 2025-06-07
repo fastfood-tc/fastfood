@@ -2,10 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from '../../domain/core/customer.entity';
-import {
-  ICustomerRepository,
-  CUSTOMER_REPOSITORY,
-} from '../../ports/out/customer.repository.port';
+import { ICustomerRepository } from '../../ports/out/customer.repository.port';
 
 @Injectable()
 export class TypeOrmCustomerRepositoryAdapter implements ICustomerRepository {
