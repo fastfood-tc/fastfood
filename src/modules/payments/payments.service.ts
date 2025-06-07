@@ -9,17 +9,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { Payment } from './entities/payments.entity';
-import { OrdersService } from '../orders/orders.service';
+import { OrderService } from '../orders/application/services/order.service';
 import { PaymentStatus } from './types/payments.types';
 import { WebhookPaymentDto } from './dto/webhook-payment.dto';
-import { OrderStatus } from '../orders/types/orders.types';
+import { OrderStatus } from '../orders/domain/core/types/orders.types';
+import { UpdateOrderStatusDto } from '../orders/application/dto/update-order.dto';
 
 @Injectable()
 export class PaymentService {
   constructor(
     @InjectRepository(Payment)
     private readonly paymentRepository: Repository<Payment>,
-    private readonly orderService: OrdersService,
+    private readonly orderService: OrderService,
   ) {}
 
   async create(dto: CreatePaymentDto) {
@@ -39,9 +40,12 @@ export class PaymentService {
       });
       return await this.paymentRepository.save(payment);
     } catch (error) {
-      throw new InternalServerErrorException('Error creating payment', {
-        description: error.message,
-      });
+      if (error instanceof Error) {
+        throw new InternalServerErrorException('Error creating payment', {
+          description: error.message,
+        });
+      }
+      throw new InternalServerErrorException('Error creating payment');
     }
   }
 
@@ -66,9 +70,12 @@ export class PaymentService {
       payment.status = status;
       return await this.paymentRepository.save(payment);
     } catch (error) {
-      throw new InternalServerErrorException('Error updating payment status', {
-        description: error.message,
-      });
+      if (error instanceof Error) {
+        throw new InternalServerErrorException('Error updating payment status', {
+          description: error.message,
+        });
+      }
+      throw new InternalServerErrorException('Error updating payment status');
     }
   }
 
@@ -79,19 +86,14 @@ export class PaymentService {
       if (!payment) {
         throw new NotFoundException(`Payment with ID ${id} not found.`);
       }
-      const order = await this.orderService.findOne(payment.orderId);
-      if (!order) {
-        throw new NotFoundException(
-          `Order with ID ${payment.orderId} not found.`,
-        );
-      }
-      if (status === PaymentStatus.APPROVED) {
-        await this.orderService.updateStatus(order.id, OrderStatus.RECEBIDO);
+      if (payment.status === PaymentStatus.APPROVED) {
+        const order = await this.orderService.findOne(payment.orderId);
+        await this.orderService.updateStatus(order.id, { id: order.id, status: OrderStatus.PAGO });
       }
       if (status === PaymentStatus.FAILED) {
-        await this.orderService.updateStatus(order.id, OrderStatus.CANCELADO);
+        await this.orderService.updateStatus(payment.orderId, { id: payment.orderId, status: OrderStatus.CANCELADO });
       }
-      const orderUpdated = await this.orderService.findOne(order.id);
+      const orderUpdated = await this.orderService.findOne(payment.orderId);
       const paymentUpdated = await this.updateStatus(id, status);
       return {
         payment: paymentUpdated,
@@ -99,9 +101,12 @@ export class PaymentService {
         message: `Payment status updated to ${status}`,
       };
     } catch (error) {
-      throw new InternalServerErrorException('Error processing webhook', {
-        description: error.message,
-      });
+      if (error instanceof Error) {
+        throw new InternalServerErrorException('Error processing webhook', {
+          description: error.message,
+        });
+      }
+      throw new InternalServerErrorException('Error processing webhook');
     }
   }
 }

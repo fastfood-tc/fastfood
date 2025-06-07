@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { CreateOrderItemDto } from 'src/modules/order-item/dto/create-order-item.dto';
+import { CreateOrderItemDto } from 'src/modules/order-item/application/dto/create-order-item.dto';
 
 export class CreateOrderDto {
   @IsString()

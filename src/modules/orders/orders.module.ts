@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { OrdersService } from './orders.service';
-import { OrdersController } from './orders.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Order } from './entities/order.entity';
-import { CustomersModule } from '../customers/customers.module'; // Assuming you have a CustomerModule for customer-related logic
+import { Order } from './domain/core/order.entity';
+import { OrderService } from './application/services/order.service';
+import { TypeOrmOrderRepositoryAdapter } from './adapters/out/typeorm-order.repository.adapter';
+import { OrderControllerAdapter } from './adapters/in/order.controller.adapter';
+import { ORDER_REPOSITORY } from './ports/out/order.repository.port';
+import { CustomersModule } from '../customers/customers.module';
 import { ProductsModule } from '../products/products.module';
 import { OrderItemModule } from '../order-item/order-item.module';
 
@@ -14,8 +16,14 @@ import { OrderItemModule } from '../order-item/order-item.module';
     ProductsModule,
     OrderItemModule,
   ],
-  controllers: [OrdersController],
-  providers: [OrdersService],
-  exports: [OrdersService],
+  controllers: [OrderControllerAdapter],
+  providers: [
+    OrderService,
+    {
+      provide: ORDER_REPOSITORY,
+      useClass: TypeOrmOrderRepositoryAdapter,
+    },
+  ],
+  exports: [OrderService],
 })
 export class OrdersModule {}

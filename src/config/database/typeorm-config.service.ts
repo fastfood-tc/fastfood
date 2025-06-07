@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Customer } from 'src/modules/customers/domain/core/customer.entity';
-import { OrderItem } from 'src/modules/order-item/entities/order-item.entity';
-import { Order } from 'src/modules/orders/entities/order.entity';
-import { Payment } from 'src/modules/payments/entities/payments.entity';
+import { OrderItem } from 'src/modules/order-item/domain/core/order-item.entity';
+import { Order } from 'src/modules/orders/domain/core/order.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
+import { Payment } from 'src/modules/payments/entities/payments.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
